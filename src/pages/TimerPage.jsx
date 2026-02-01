@@ -4,35 +4,75 @@ import { ROUTES } from "../routes";
 import Footer from "../components/Footer";
 
 export default function TimerPage() {
-  const [index, setIndex] = useState(() => {
-  const saved = localStorage.getItem("currentRouteIndex");
-  return saved !== null ? Number(saved) : 0;
-});
-
-  const [running, setRunning] = useState(false);
-  const [time, setTime] = useState(0); // milliseconds
   const navigate = useNavigate();
-  
+
+  /* ================= ROUTE INDEX ================= */
+  const [index, setIndex] = useState(() => {
+    const saved = localStorage.getItem("currentRouteIndex");
+    return saved !== null ? Number(saved) : 0;
+  });
 
   useEffect(() => {
-  localStorage.setItem("currentRouteIndex", index);
-}, [index]);
+    localStorage.setItem("currentRouteIndex", index);
+  }, [index]);
 
+  /* ================= TIMER STATE ================= */
+  const [running, setRunning] = useState(() => {
+    return localStorage.getItem("timerRunning") === "true";
+  });
+
+  const [startTime, setStartTime] = useState(() => {
+    const v = localStorage.getItem("timerStart");
+    return v ? Number(v) : null;
+  });
+
+  const [elapsed, setElapsed] = useState(() => {
+    const v = localStorage.getItem("timerElapsed");
+    return v ? Number(v) : 0;
+  });
+
+  const [displayTime, setDisplayTime] = useState(elapsed);
+
+  /* ================= TICK ================= */
   useEffect(() => {
-    if (!running) return;
     const interval = setInterval(() => {
-      setTime(t => t + 10);
-    }, 10);
-    return () => clearInterval(interval);
-  }, [running]);
+      if (running && startTime) {
+        setDisplayTime(elapsed + (Date.now() - startTime));
+      } else {
+        setDisplayTime(elapsed);
+      }
+    }, 50);
 
-  const saveAndNext = () => {
+    return () => clearInterval(interval);
+  }, [running, startTime, elapsed]);
+
+  /* ================= PERSIST ================= */
+  useEffect(() => {
+    localStorage.setItem("timerRunning", running);
+    localStorage.setItem("timerElapsed", elapsed);
+    if (startTime) {
+      localStorage.setItem("timerStart", startTime);
+    } else {
+      localStorage.removeItem("timerStart");
+    }
+  }, [running, elapsed, startTime]);
+
+  /* ================= ACTIONS ================= */
+  const start = () => {
+    setRunning(true);
+    setStartTime(Date.now());
+  };
+
+  const stopAndNext = () => {
+    const total = elapsed + (Date.now() - startTime);
+
     const prev = JSON.parse(localStorage.getItem("results")) || {};
-    const updated = { ...prev, [index]: time };
-    localStorage.setItem("results", JSON.stringify(updated));
+    prev[index] = total;
+    localStorage.setItem("results", JSON.stringify(prev));
 
     setRunning(false);
-    setTime(0);
+    setStartTime(null);
+    setElapsed(0);
 
     if (index < ROUTES.length - 1) {
       setIndex(i => i + 1);
@@ -41,19 +81,21 @@ export default function TimerPage() {
 
   const reset = () => {
     setRunning(false);
-    setTime(0);
+    setStartTime(null);
+    setElapsed(0);
   };
 
-  const prev = () => {
+  const prevRoute = () => {
     reset();
     if (index > 0) setIndex(i => i - 1);
   };
 
-  const next = () => {
+  const nextRoute = () => {
     reset();
     if (index < ROUTES.length - 1) setIndex(i => i + 1);
   };
 
+  /* ================= FORMAT ================= */
   const format = ms => {
     const m = Math.floor(ms / 60000);
     const s = Math.floor((ms % 60000) / 1000);
@@ -69,21 +111,26 @@ export default function TimerPage() {
         {index + 1} / {ROUTES.length}
       </div>
 
-      {/* TITLE (FIXED HEIGHT + MARQUEE) */}
-      <div className="route-title-wrapper">
-        <div className="route-title">
-          {ROUTES[index]}
-        </div>
+      {/* CURRENT ROUTE (STATIC) */}
+      <div className="w-full max-w-md text-center text-base font-semibold mb-1">
+        {ROUTES[index]}
       </div>
+
+      {/* NEXT ROUTE (FADED) */}
+      {ROUTES[index + 1] && (
+        <div className="w-full max-w-md text-center text-sm text-gray-400 opacity-60 mb-4">
+          Next: {ROUTES[index + 1]}
+        </div>
+      )}
 
       {/* TIMER */}
       <div className="text-5xl font-mono my-6">
-        {format(time)}
+        {format(displayTime)}
       </div>
 
       {/* MAIN BUTTON */}
       <button
-        onClick={() => (running ? saveAndNext() : setRunning(true))}
+        onClick={() => (running ? stopAndNext() : start())}
         className="bg-green-600 px-8 py-4 rounded-xl text-xl font-bold mb-3"
       >
         {running ? "STOP & NEXT" : "START"}
@@ -99,8 +146,8 @@ export default function TimerPage() {
 
       {/* NAV */}
       <div className="flex gap-8 text-3xl mb-6">
-        <button onClick={prev}>⬅️</button>
-        <button onClick={next}>➡️</button>
+        <button onClick={prevRoute}>⬅️</button>
+        <button onClick={nextRoute}>➡️</button>
       </div>
 
       {/* RESULT */}
