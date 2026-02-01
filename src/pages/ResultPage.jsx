@@ -1,7 +1,6 @@
 import { ROUTES } from "../routes";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Footer from "../components/Footer";
 
 export default function ResultPage() {
   const navigate = useNavigate();
@@ -27,6 +26,26 @@ export default function ResultPage() {
   const resetAll = () => {
     localStorage.removeItem("results");
     setResults({});
+  };
+
+  // 🔽 DOWNLOAD TXT
+  const downloadTxt = () => {
+    const lines = ROUTES.map((r, i) => {
+      return `${i + 1}. ${r} => ${format(results[i])}`;
+    });
+
+    const content = lines.join("\n");
+    const blob = new Blob([content], { type: "text/plain" });
+
+    const today = new Date().toISOString().split("T")[0];
+    const filename = `timing_route_${today}.txt`;
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+
+    URL.revokeObjectURL(link.href);
   };
 
   return (
@@ -58,7 +77,7 @@ export default function ResultPage() {
         ))}
       </ul>
 
-      <div className="mt-6 flex justify-between">
+      <div className="mt-6 flex flex-wrap gap-3 justify-between items-center">
         <button
           onClick={() => navigate("/")}
           className="underline"
@@ -66,13 +85,21 @@ export default function ResultPage() {
           ⬅️ Kembali
         </button>
 
-        <button
-          onClick={resetAll}
-          className="bg-red-600 px-4 py-2 rounded"
-        >
-          RESET ALL
-        </button>
-        <Footer />
+        <div className="flex gap-3">
+          <button
+            onClick={downloadTxt}
+            className="bg-blue-600 px-4 py-2 rounded"
+          >
+            ⬇️ Unduh Data (.txt)
+          </button>
+
+          <button
+            onClick={resetAll}
+            className="bg-red-600 px-4 py-2 rounded"
+          >
+            RESET ALL
+          </button>
+        </div>
       </div>
     </div>
   );
