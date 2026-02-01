@@ -24,9 +24,11 @@ export default function ResultPage() {
   };
 
   const resetAll = () => {
-    localStorage.removeItem("results");
-    setResults({});
-  };
+  localStorage.removeItem("results");
+  localStorage.removeItem("currentRouteIndex"); // ⬅️ ini poin no 3
+  setResults({});
+};
+
 
   // 🔽 DOWNLOAD TXT
   const downloadTxt = () => {
@@ -63,7 +65,7 @@ export default function ResultPage() {
             </span>
 
             <div className="flex items-center gap-3">
-              <span className="font-mono">
+              <span className="font-mono text-amber-400">
                 {format(results[i])}
               </span>
               <button

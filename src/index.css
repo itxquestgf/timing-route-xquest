@@ -1,1 +1,43 @@
 @import "tailwindcss";
+
+/* ===== ROUTE TITLE (ANTI UI SHIFT MOBILE) ===== */
+
+.route-title-wrapper {
+  width: 100%;
+  max-width: 380px;
+  height: 56px;            /* FIXED HEIGHT */
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.route-title {
+  position: absolute;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 14px;         /* MOBILE */
+  animation: marquee 7s linear infinite;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .route-title {
+    font-size: 16px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .route-title {
+    font-size: 18px;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
