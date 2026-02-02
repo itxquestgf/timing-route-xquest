@@ -1,16 +1,98 @@
-# React + Vite
+# Route Timing System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistem web untuk mencatat dan memonitor waktu setiap rute kegiatan secara berurutan.
+Dirancang untuk penggunaan **operasional lapangan / officer**, aman digunakan di perangkat mobile.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Fitur Utama
 
-## React Compiler
+- ⏱️ Timer per rute (akurasi milidetik)
+- 🔄 Timer **tetap berjalan** walau:
+  - halaman di-refresh
+  - pindah ke halaman Result
+- 📍 Posisi rute terakhir **tersimpan otomatis**
+- ⏭️ STOP → simpan waktu & lanjut ke rute berikutnya
+- 👀 Preview **Next Route** dengan transparansi rendah
+- 🗑️ Hapus timing per rute
+- 🔁 Reset semua timing
+- 📄 Unduh laporan hasil timing (`.txt`)
+- 📱 UI stabil & aman untuk mobile
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Teknologi
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Vite + React**
+- **Tailwind CSS**
+- **LocalStorage** (persist data & timer)
+- **React Router**
+
+---
+
+## 📁 Struktur Singkat
+
+
+---
+
+## ▶️ Cara Penggunaan
+
+### 1. Halaman Timer
+- Tekan **START** untuk memulai timer
+- Tekan **STOP & NEXT** untuk:
+  - menyimpan waktu rute
+  - otomatis pindah ke rute berikutnya
+- Gunakan **⬅️ / ➡️** untuk berpindah rute manual
+- **RESET** hanya mereset rute aktif
+
+### 2. Halaman Result
+- Melihat seluruh hasil timing
+- 🗑️ Hapus timing per rute
+- 🔁 Reset semua timing
+- ⬇️ Unduh data timing dalam format `.txt`
+
+---
+
+## 📄 Format File Unduhan
+
+**timing_route_yyyy-mm-dd.txt**
+
+---
+
+## 🔐 Persistensi Data
+
+Disimpan di `localStorage`:
+- `results` → hasil timing per rute
+- `currentRouteIndex` → posisi rute terakhir
+- `timerRunning` → status timer
+- `timerStart` → timestamp mulai
+- `timerElapsed` → akumulasi waktu
+
+---
+
+## ⚠️ Catatan Operasional
+
+- Cocok untuk **penggunaan internal**
+- Tidak membutuhkan koneksi internet
+- Disarankan reset data saat memulai batch / sesi baru
+
+---
+
+## 📜 Lisensi
+
+© 2026 **IT-XQUEST**  
+Licensed Software — Internal Use Only
+
+---
+
+## 🚀 Pengembangan Lanjutan (Opsional)
+
+- Export Excel / CSV
+- Firebase Realtime Sync
+- Multi device monitoring
+- Auto alert jika durasi rute melebihi batas
+- Mode lock (anti skip)
+
+---
+
+**Made by IT-XQUEST**
